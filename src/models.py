@@ -7,8 +7,6 @@ db = SQLAlchemy()
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=True)
 
     def serialize(self):
         return {
@@ -46,4 +44,16 @@ class Planet(db.Model):
             "name": self.name,
             "population": self.population,
             "size": self.size
+        }
+
+class fav_character(db.Model):
+    user_id: Mapped[int] = mapped_column(primary_key=True)
+    character_id: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    characters: Mapped[list["Character"]] = relationship("Character", back_populates="user")
+    user: Mapped["User"] = relationship("User", back_populates="characters")
+    
+    def serialize(self):
+        return {
+            "user_id": self.id,
+            "character_id": self.email
         }

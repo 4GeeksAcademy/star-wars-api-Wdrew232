@@ -4,11 +4,10 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 from flask import Flask, request, jsonify, url_for # type: ignore
 from flask_migrate import Migrate # type: ignore
-from flask_swagger import swagger # type: ignore
 from flask_cors import CORS # type: ignore
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User,Character,Planet
+from models import db, User,Character,Planet,fav_character
 #from models import Person
 
 app = Flask(__name__)
@@ -58,6 +57,13 @@ def handle_get_planet():
 
     return jsonify(planets_list), 200
 
+@app.route('/fav_character', methods=['GET'])
+def handle_get_fav():
+    fav = fav_character.query.all()
+    favorite_list = [fav_character.serialize() for favData in fav ]
+
+    return jsonify(favorite_list), 200
+
 
 @app.route('/user', methods=['POST'])
 def handle_user_post():
@@ -86,7 +92,7 @@ def handle_character_post():
     db.session.commit()
     return jsonify(new_character.serialize()), 200
 
-@app.route('/planet', methods=['POST'])
+@app.route('/planets', methods=['POST'])
 def handle_planet_post():
     data = request.json
     new_planet = Planet(
@@ -98,6 +104,17 @@ def handle_planet_post():
     db.session.add(new_planet)
     db.session.commit()
     return jsonify(new_planet.serialize()), 200
+
+@app.route('/fav_character', methods=['POST'])
+def handle_fav_post():
+    data = request.json
+    new_fav = User(
+       user_id = data["user_id"], 
+       character_id = data["character_id"]
+    )
+    db.session.add(new_fav)
+    db.session.commit()
+    return jsonify(new_fav.serialize()), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
