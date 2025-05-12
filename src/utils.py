@@ -1,5 +1,6 @@
 from flask import jsonify, url_for
 
+
 class APIException(Exception):
     """Custom API Exception for handling errors."""
     status_code = 400
@@ -17,11 +18,13 @@ class APIException(Exception):
         rv['message'] = self.message
         return rv
 
+
 def has_no_empty_params(rule):
     """Check if a route has no empty parameters."""
     defaults = rule.defaults if rule.defaults is not None else ()
     arguments = rule.arguments if rule.arguments is not None else ()
     return len(defaults) >= len(arguments)
+
 
 def generate_sitemap(app):
     """Generate a sitemap for all API endpoints."""
@@ -32,7 +35,8 @@ def generate_sitemap(app):
             if "/admin/" not in url:
                 links.append(url)
 
-    links_html = "".join(["<li><a href='" + y + "'>" + y + "</a></li>" for y in links])
+    links_html = "".join(["<li><a href='" + y + "'>" +
+                         y + "</a></li>" for y in links])
     return f"""
         <div style="text-align: center;">
         <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
