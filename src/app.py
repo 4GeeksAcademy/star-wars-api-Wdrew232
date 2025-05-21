@@ -237,6 +237,58 @@ def delete_favorite_vehicle(vehicle_id):
     db.session.commit()
     return jsonify({"message": "Favorite vehicle removed"}), 200
 
+# -------------------- CHARACTERS --------------------
+
+@app.route('/character/<int:character_id>', methods=['DELETE'])
+def delete_character(character_id):
+    character = Character.query.get(character_id)
+    if not character:
+        return jsonify({"error": "Character not found"}), 404
+    db.session.delete(character)
+    db.session.commit()
+    return jsonify({"message": "Character deleted"}), 200
+
+# -------------------- PLANETS --------------------
+
+@app.route('/planets/<int:planet_id>', methods=['DELETE'])
+def delete_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        return jsonify({"error": "Planet not found"}), 404
+    db.session.delete(planet)
+    db.session.commit()
+    return jsonify({"message": "Planet deleted"}), 200
+
+# -------------------- DELETE FAVORITE CHARACTERS --------------------
+
+@app.route('/favorite/character/<int:character_id>', methods=['DELETE'])
+def delete_favorite_character(character_id):
+    data = request.json
+    fav = Favorites.query.filter_by(user_id=data["user_id"], character_id=character_id).first()
+    
+    if not fav:
+        return jsonify({"error": "Favorite character not found"}), 404
+
+    db.session.delete(fav)
+    db.session.commit()
+    return jsonify({"message": "Favorite character removed"}), 200
+
+# -------------------- DELETE FAVORITE PLANETS --------------------
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
+def delete_favorite_planet(planet_id):
+    data = request.json
+    fav = Favorites.query.filter_by(user_id=data["user_id"], planet_id=planet_id).first()
+
+    if not fav:
+        return jsonify({"error": "Favorite planet not found"}), 404
+
+    db.session.delete(fav)
+    db.session.commit()
+    return jsonify({"message": "Favorite planet removed"}), 200
+
+
+
 
 # Run the API
 if __name__ == '__main__':
